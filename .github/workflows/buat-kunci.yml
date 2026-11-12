@@ -1,0 +1,19 @@
+name: Buat kunci debug (sekali saja)
+on:
+  workflow_dispatch:
+jobs:
+  kunci:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 17
+      - name: Buat keystore
+        run: |
+          keytool -genkeypair -v -keystore debug.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android Debug,O=Android,C=US"
+          base64 -w0 debug.keystore > keystore-base64.txt
+      - uses: actions/upload-artifact@v7
+        with:
+          name: keystore-base64
+          path: keystore-base64.txt
